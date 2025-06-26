@@ -14,6 +14,7 @@ from src.routes.metas import metas_bp
 from src.routes.lancamentos import lancamentos_bp
 from src.routes.observacoes import observacoes_bp
 from src.routes.auth import auth_bp
+from flask import Flask, render_template
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
@@ -67,5 +68,7 @@ def serve(path):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
 
