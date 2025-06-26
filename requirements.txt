@@ -2,3 +2,8 @@ flask
 gunicorn
 flask_cors
 flask_login
+flask_sqlalchemy
+werkzurg
+jinja2
+itsdangerous
+click
