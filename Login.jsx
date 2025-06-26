@@ -1,102 +1,46 @@
-import { useState } from 'react';
-import { apiClient } from '../lib/api';
+import React, { useState } from "react";
+import axios from "axios";
 
-export default function Login({ onLogin }) {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+function Login({ onLogin }) {
+  const [usuario, setUsuario] = useState("");
+  const [senha, setSenha] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
+  const handleLogin = async () => {
     try {
-      const response = await apiClient.login(formData);
-      
-      if (response.user) {
-        onLogin(response.user);
-      }
+      const response = await axios.post("/api/login", {
+        usuario,
+        senha
+      });
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("usuarioTipo", response.data.user.tipo); // <- salvando tipo
+
+      onLogin();
     } catch (error) {
-      setError(error.message || 'Erro ao fazer login');
-    } finally {
-      setLoading(false);
+      alert("Erro ao fazer login");
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sistema de Metas e Lançamentos
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Faça login para acessar o sistema
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">
-                Usuário
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Nome de usuário"
-                value={formData.username}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Senha
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Senha"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-600 text-sm text-center">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {loading ? 'Entrando...' : 'Entrar'}
-            </button>
-          </div>
-        </form>
-      </div>
+    <div style={{ padding: 20 }}>
+      <h2>Login</h2>
+      <input
+        type="text"
+        placeholder="Usuário"
+        value={usuario}
+        onChange={(e) => setUsuario(e.target.value)}
+      />
+      <br />
+      <input
+        type="password"
+        placeholder="Senha"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+      />
+      <br />
+      <button onClick={handleLogin}>Entrar</button>
     </div>
   );
 }
 
+export default Login;
