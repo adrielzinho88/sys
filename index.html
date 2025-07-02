@@ -9,5 +9,71 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <form method="POST" action="/lancar">
+  <label>Data:</label>
+  <input type="date" name="data" required>
+
+  <label>Operador:</label>
+  <input type="text" name="operador" required>
+
+  <label>Setor:</label>
+  <select name="setor" id="setor" onchange="atualizarAreas()">
+    <option value="Alça">Alça</option>
+    <option value="Fundo">Fundo</option>
+  </select>
+
+  <label>Área:</label>
+  <select name="area" id="area" onchange="mostrarMeta()">
+    <option value="Alça">Alça</option>
+  </select>
+
+  <label>Quantidade:</label>
+  <input type="number" name="quantidade" required>
+
+  <div>
+    <p><strong>Meta da Área:</strong> <span id="meta"></span></p>
+    <p><strong>Bonificação:</strong> <span id="bonus"></span></p>
+  </div>
+
+  <button type="submit">Salvar</button>
+</form>
+
+<script>
+  const areasPorSetor = {
+    "Alça": ["Alça", "Alça Especial"],
+    "Fundo": ["Fundo", "Fundo Especial"]
+  };
+
+  const metas = {
+    "Alça": { meta: 160, bonus: "R$350 + R$0,70/un extra" },
+    "Alça Especial": { meta: 140, bonus: "R$300 + R$0,60/un extra" },
+    "Fundo": { meta: 1500, bonus: "R$200 + R$0,04/un extra" },
+    "Fundo Especial": { meta: 1550, bonus: "R$230 + R$0,04/un extra" }
+  };
+
+  function atualizarAreas() {
+    const setor = document.getElementById("setor").value;
+    const areaSelect = document.getElementById("area");
+    areaSelect.innerHTML = "";
+    areasPorSetor[setor].forEach(area => {
+      const option = document.createElement("option");
+      option.value = area;
+      option.text = area;
+      areaSelect.appendChild(option);
+    });
+    mostrarMeta(); // atualizar ao mudar o setor
+  }
+
+  function mostrarMeta() {
+    const area = document.getElementById("area").value;
+    document.getElementById("meta").textContent = metas[area].meta + " un";
+    document.getElementById("bonus").textContent = metas[area].bonus;
+  }
+
+  window.onload = () => {
+    atualizarAreas(); // iniciar com os dados certos
+  };
+        </script>
+    
   </body>
 </html>
