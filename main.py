@@ -16,6 +16,10 @@ from src.routes.observacoes import observacoes_bp
 from src.routes.auth import auth_bp
 from flask import Flask, render_template
 
+app = Flask(__name__)
+app.register_blueprint(lancamento_bp)
+
+
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
 
@@ -45,7 +49,21 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
     db.create_all()
+    
+    @app.route('/lancar', methods=['GET', 'POST'])
+def lancar():
+    if request.method == 'POST':
+        # Aqui você pega os dados do formulário e salva no banco
+        data = request.form['data']
+        operador = request.form['operador']
+        setor = request.form['setor']
+        area = request.form['area']
+        quantidade = request.form['quantidade']
+        # salvar no banco...
+        return redirect('/dashboard')  # ou qualquer outra página
 
+    return render_template('lancamento.html')
+    
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
